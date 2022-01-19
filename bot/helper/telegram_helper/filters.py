@@ -32,11 +32,12 @@ class CustomFilters:
             if len(args) > 1:
                 # Cancelling by gid
                 with download_dict_lock:
-                    for message_id, status in download_dict.items():
-                        if status.gid() == args[1] and status.message.from_user.id == user_id:
-                            return True
-                    else:
-                        return False
+                    return any(
+                        status.gid() == args[1]
+                        and status.message.from_user.id == user_id
+                        for message_id, status in download_dict.items()
+                    )
+
             # Cancelling by replying to original mirror message
             reply_user = message.reply_to_message.from_user.id
             return bool(reply_user == user_id)
